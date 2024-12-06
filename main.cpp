@@ -5,11 +5,15 @@
 ** main
 */
 
-#include "rubiks_cube.hpp"
+#include "main.h"
 
-int main()
-{
-    Rubiks cube(WINDOW_WIDTH, WINDOW_HEIGHT, "Rubik's Cube");
+int launch_sim(int width, int height, const std::string &title) {
+    Window window(width, height, title);
+    Rubiks cube(width, height);
     cube.Run();
     return OK;
+}
+
+int main() {
+    return launch_sim(WINDOW_WIDTH, WINDOW_HEIGHT, "Rubik's Cube");
 }

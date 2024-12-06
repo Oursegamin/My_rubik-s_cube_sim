@@ -5,8 +5,7 @@
 ** globals
 */
 
-#include "rubiks_cube.hpp"
-
+#include "sfml_globals.hpp"
 
 SFML_globals::SFML_globals() {}
 

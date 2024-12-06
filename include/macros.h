@@ -5,12 +5,17 @@
 ** macros
 */
 
+#pragma once
 #ifndef MACROS_HPP_
 #define MACROS_HPP_
 
 #define OK 0
 #define KO 84
 #define ERR -1
+
+#define LIB_DIR "../lib/include/my.h"
+
+#define UNUSED __attribute__((unused))
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080

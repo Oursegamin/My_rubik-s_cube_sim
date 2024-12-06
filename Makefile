@@ -5,60 +5,73 @@
 ## solostumper
 ##
 
-MAIN	=					main.cpp
+MAIN		=	main.cpp
 
-SRC_DIR = 					src/
+SRC_DIR 	=	src/
 
-GLOBALS_DIR	= 				globals/
+TEST_DIR	=	tests/
 
-SRC_FILES	=				rubiks_cube.cpp				\
-							cube.cpp					\
+SRC_LIB		=	$(wildcard lib/my/*.cpp)
 
-GLOBALS_FILES	=			sfml_globals.cpp			\
+SRC_FILES	=	window.cpp									\
+				rubiks_cube.cpp								\
+				rubiks_moves.cpp							\
+				gl_cube.cpp									\
 
-SRCTEST = 	tests/test_lib.c							\
+TEST_FILES	=	vector3_tests.cpp							\
+				vector4_tests.cpp							\
+				matrix3_tests.cpp							\
+				matrix4_tests.cpp							\
 
-SRC		=	$(addprefix $(SRC_DIR), $(SRC_FILES)		\
-				$(addprefix $(GLOBALS_DIR),				\
-					$(GLOBALS_FILES)					\
-				)										\
-			)											\
+SRC			=	$(addprefix $(SRC_DIR), $(SRC_FILES))
 
-OBJ	= 	$(MAIN:.cpp=.o) $(SRC:.cpp=.o)
+SRC_TEST	=	$(addprefix $(TEST_DIR), $(TEST_FILES))
 
-OBJTEST =	$(SRCTEST:.cpp=.o)
+OBJ			=	$(MAIN:.cpp=.o)								\
+				$(SRC:.cpp=.o)								\
 
-NAME	=	rubiks_cube
+OBJTEST		=	$(SRC_TEST:.cpp=.o)
 
-NAMETEST = 	unit_tests
+NAME		=	rubiks_cube
 
-CXXFLAGS = -Wall -Wextra -g
+NAMETEST	=	unit_tests
+
+CXXFLAGS	=	-Wall -Wextra -g
 
 CPPFLAGS	=	-I./include
 
+CPPFLAGSLIB	=	-I./lib/include
+
+LDLIBS		=	-L./lib -lmy # -lglad
+
 GRAPHICS	=	-lsfml-graphics -lsfml-system -lsfml-audio -lsfml-window
+
+GLXFLAGS	=	-lGL -lGLU -lglut
 
 MATHS		=	-lm
 
-CC = g++
+LIBS		=	$(LDLIBS) $(GRAPHICS) $(GLXFLAGS) $(MATHS)
+
+CC			=	g++
 
 all: $(NAME)
 
-$(NAME):	$(OBJ)
-	$(CC) $(CXXFLAGS) $(CPPFLAGS) -o $@ $(OBJ) $(GRAPHICS) $(MATHS)
+$(NAME):	buildlib	$(OBJ)
+	$(CC) $(CXXFLAGS) $(CPPFLAGS) -o $@ $(OBJ) $(LIBS)
 
 buildlib:
-	make -C ./lib/my
+	make -C ./lib
 
-buildlibtest: buildlib
-	make -C ./lib/my CFLAGS='$(CPPFLAGS) --coverage'
+buildlibtest:
+	make -C ./lib CXXFLAGS='$(CXXFLAGS) --coverage'
 
 buildtest: CFLAGS += --coverage
-buildtest: buildlibtest $(OBJTEST)
-	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(NAMETEST) $(OBJTEST) $(SRC) $(LDLIBS)	\
-	--coverage -lcriterion
+buildtest:	fclean_silent	buildlibtest	$(OBJTEST)
+	$(CC) $(CXXFLAGS) $(CPPFLAGS) $(CPPFLAGSLIB) -o $(NAMETEST) \
+	$(OBJTEST) $(SRC) $(SRC_LIB) --coverage -lcriterion	$(LIBS)
 
 clean:
+	make -C ./lib clean
 	rm -f $(OBJ)
 	find . -name "*~" -delete
 	find . -name "#*#" -delete
@@ -69,7 +82,11 @@ clean:
 	find . -name "*.cor" -delete
 
 fclean: clean cleantest
+	make -C ./lib fclean
 	rm -f $(NAME)
+
+fclean_silent:
+	@$(MAKE) fclean
 
 cleantest:
 		rm -f $(NAMETEST)

@@ -8,6 +8,8 @@
 #ifndef GLOBALS_HPP_
 #define GLOBALS_HPP_
 
+#include <SFML/Graphics.hpp>
+
 class SFML_globals
 {
     public:

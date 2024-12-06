@@ -5,6 +5,7 @@
 ** window
 */
 
+#pragma once
 #ifndef GAME_HPP_
 #define GAME_HPP_
 
@@ -14,41 +15,52 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 
-#include "macros.h"
 #include "assets.h"
-#include "globals/sfml_globals.hpp"
-#include "cube.hpp"
+#include "window.hpp"
+#include "rubiks_moves.hpp"
+#include "gl_cube.hpp"
 
 #define RUBIKS_TITLE "Rubik's Cube Sim"
 #define RUBIKS_TITLE_SIZE 50
 #define RUBIKS_CUBE_SIZE 3
-#define RUBIKS_CUBE_UNIQUE_CUBES pow(RUBIKS_CUBE_SIZE, 3) - pow(RUBIKS_CUBE_SIZE - 2, 3)
-#define RUBIKS_TEXTURE_PATH "assets/textures/rubiks_cube.png"
-#define RUBIKS_TEXTURE_PATH_2 "assets/textures/rubiks_cube_2.png"
-#define RUBIKS_TEXTURE_PATH_3 "assets/textures/rubiks_cube_3.png"
+#define RUBIKS_CUBE_UNIQUE_CUBES(size) pow(size, 3) - pow(size - 2, 3)
 
-class Rubiks {
-    static sf::RenderWindow *window;
-
+class Rubiks : public Rubiks_moves {
     sf::Font font;
     sf::Text title;
 
-    Cube *cube[RUBIKS_CUBE_SIZE];
+    bool moving = false;
+    sf::Vector2i start;
+    sf::Vector2i end;
+    sf::Mouse mouse;
+
+    std::vector<GL_cube> gl_cubes;
+
+    action_t action;
+    Vector3f pos = Vector3f(0.f, 0.f, -40.f);
+    float x_angle = RUBIKS_CUBE_X_ANGLE;
+    float y_angle = RUBIKS_CUBE_Y_ANGLE;
+    float z_angle = RUBIKS_CUBE_Z_ANGLE;
 
     public:
-        Rubiks(int width, int height, std::string title);
+        Rubiks(int width, int height);
         ~Rubiks();
+        void Init_cubes(int size, float scale, colors_t colors[6]);
+
         void Run();
         void Clear_window(sf::Color color = sf::Color::Black);
-        void Events();
-        void Manager();
-        void Draw();
 
-        static void Init_window(int width, int height, const std::string title);
+        void _Rotate(sf::Vector2i start, sf::Vector2i end);
+        void Rotate(sf::Event *event);
+
+        void Events();
+
+        void Manager();
+
+        void Draw();
 
         static sf::Vector2f Get_resize(float x, float y);
         static sf::Vector2f Get_mouse_pos();
-        static sf::RenderWindow *Get_window();
         static sf::Vector2f Get_window_size();
 };
 
