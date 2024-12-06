@@ -38,9 +38,11 @@ class Rubiks : public Rubiks_moves {
 
     action_t action;
     Vector3f pos = Vector3f(0.f, 0.f, -40.f);
-    float x_angle = RUBIKS_CUBE_X_ANGLE;
-    float y_angle = RUBIKS_CUBE_Y_ANGLE;
-    float z_angle = RUBIKS_CUBE_Z_ANGLE;
+    Vector3f angles = {
+        RUBIKS_CUBE_X_ANGLE,
+        RUBIKS_CUBE_Y_ANGLE,
+        RUBIKS_CUBE_Z_ANGLE,
+    };
 
     public:
         Rubiks(int width, int height);
@@ -54,6 +56,7 @@ class Rubiks : public Rubiks_moves {
         void Rotate(sf::Event *event);
 
         void Events();
+        void Window_events(sf::Event *event);
 
         void Manager();
 

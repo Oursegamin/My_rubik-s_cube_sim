@@ -17,11 +17,11 @@
 
 typedef struct action_s {
     int axis;
-    int slice;
+    int layer;
     float dir;
 
     action_s();
-    action_s(int axis, int slice, float dir);
+    action_s(int axis, int layer, float dir);
     action_s(const action_s &other);
     ~action_s();
 
@@ -40,7 +40,6 @@ typedef struct action_s {
 
 #define RUBIKS_CUBE_RANDOM_MOVE_NUMBER 75
 #define RUBIKS_CUBE_RANDOM_MOVE_SPEED 45
-
 
 #define RUBIKS_MOVE_TOP     (action_t){1, 2, -1}
 #define RUBIKS_MOVE_BOTTOM  (action_t){1, 0, -1}

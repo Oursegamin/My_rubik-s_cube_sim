@@ -23,6 +23,8 @@ Rubiks::Rubiks(int width, UNUSED int height) {
             COLOR_YELLOW,       // bottom   side
         }
     );
+    // current_matrix = Matrix4f::Create_translation(pos);
+    // current_matrix *= Matrix4f::Create_rotation(Vector3f(x_angle, y_angle, z_angle));
     action = {0, 0, 0};
     this->font.loadFromFile(GENSHIN_IMPACT_FONT);
     this->title = SFML_globals::Create_text(
@@ -78,8 +80,7 @@ void Rubiks::_Rotate(sf::Vector2i start, sf::Vector2i end) {
 
     Vector3f rot = Vector3f(0, 0, 1).Cross(delta).Normalize();
 
-    x_angle += rot.x * angle;
-    y_angle += rot.y * angle;
+    angles += rot * angle;
 }
 
 void Rubiks::Rotate(sf::Event *event) {
@@ -102,20 +103,29 @@ void Rubiks::Events() {
     sf::Event event;
 
     while (Window::window->pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-            Window::window->close();
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::BackSpace)
-                Window::window->close();
-        }
+        Window_events(&event);
+        Rotate(&event);
         Randomize(&event);
         Moves(&event, &action);
-        Rotate(&event);
+    }
+}
+
+void Rubiks::Window_events(sf::Event *event) {
+    if (event->type == sf::Event::Closed)
+        Window::window->close();
+    if (event->type == sf::Event::KeyPressed) {
+        if (event->key.code == sf::Keyboard::BackSpace)
+            Window::window->close();
+    }
+    if (event->type == sf::Event::Resized) {
+        Window::window_size = sf::Vector2i(event->size.width, event->size.height);
+        glViewport(0, 0, event->size.width, event->size.height);
     }
 }
 
 void Rubiks::Manager() {
     Update_randomization(&action);
+
     if (rotating)
         animation_angle += animation_speed;
     if (rotating && animation_angle >= 90) {
@@ -129,9 +139,10 @@ void Rubiks::Manager() {
 void Rubiks::Draw() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    // glLoadMatrixf(current_matrix.Get_list());
     glTranslatef(pos.x, pos.y, pos.z);
-    glRotatef(x_angle, 1, 0, 0);
-    glRotatef(y_angle, 0, 1, 0);
+    glRotatef(angles.x, 1, 0, 0);
+    glRotatef(angles.y, 0, 1, 0);
 
     for (auto &cube : gl_cubes)
         cube.Draw(rotating, animation_angle, action);

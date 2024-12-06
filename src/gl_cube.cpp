@@ -39,7 +39,7 @@ void GL_cube::Set_vertices(float size) {
 }
 
 bool GL_cube::Is_affected(action_t action) const {
-    return current_point[action.axis] == action.slice;
+    return current_point[action.axis] == action.layer;
 }
 
 void GL_cube::Rotate(float angle, action_t action) const {

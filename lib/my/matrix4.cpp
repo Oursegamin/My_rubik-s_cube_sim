@@ -414,7 +414,7 @@ Vector4<T> Matrix4<T>::operator*(const Vector4<T> &other) const {
 
 template<typename T>
 void Matrix4<T>::operator*=(const Matrix4<T> &other) {
-    *this = *this * other;
+    *this = other * *this;
 }
 
 template<typename T>

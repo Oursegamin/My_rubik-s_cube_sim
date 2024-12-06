@@ -7,31 +7,76 @@
 
 #include "main.h"
 
-action_s::action_s() : axis(0), slice(0), dir(0) {}
+action_s::action_s() : axis(0), layer(0), dir(0) {}
 
-action_s::action_s(int axis, int slice, float dir) :
+action_s::action_s(int axis, int layer, float dir) :
     axis(axis),
-    slice(slice),
+    layer(layer),
     dir(dir) {}
 
 action_s::action_s(const action_s &other) {
     axis = other.axis;
-    slice = other.slice;
+    layer = other.layer;
     dir = other.dir;
 }
 
 action_s::~action_s() {}
 
+// void createRotationMatrix(const Vector3f angles, float matrix[3][3]) {
+//     float cx = std::cos(angles.x), sx = std::sin(angles.x);
+//     float cy = std::cos(angles.y), sy = std::sin(angles.y);
+//     float cz = std::cos(angles.z), sz = std::sin(angles.z);
+
+//     matrix[0][0] = cy * cz;
+//     matrix[0][1] = cz * sx * sy - cx * sz;
+//     matrix[0][2] = cx * cz * sy + sx * sz;
+
+//     matrix[1][0] = cy * sz;
+//     matrix[1][1] = cx * cz + sx * sy * sz;
+//     matrix[1][2] = -cz * sx + cx * sy * sz;
+
+//     matrix[2][0] = -sy;
+//     matrix[2][1] = cy * sx;
+//     matrix[2][2] = cx * cy;
+// }
+
+// action_t adjustAction(const Vector3f angles, const action_t &action) {
+//     float rotationMatrix[3][3];
+//     createRotationMatrix(angles, rotationMatrix);
+
+//     int originalAxis = action.axis;
+//     float originalDir[3] = {0.0f, 0.0f, 0.0f};
+//     originalDir[originalAxis] = 1.0f;
+
+//     float rotatedDir[3] = {0.0f, 0.0f, 0.0f};
+//     for (int i = 0; i < 3; ++i) {
+//         for (int j = 0; j < 3; ++j) {
+//             rotatedDir[i] += rotationMatrix[i][j] * originalDir[j];
+//         }
+//     }
+
+//     int adjustedAxis = 0;
+//     for (int i = 0; i < 3; ++i) {
+//         if (std::abs(rotatedDir[i]) > std::abs(rotatedDir[adjustedAxis])) {
+//             adjustedAxis = i;
+//         }
+//     }
+
+//     float adjustedDir = (rotatedDir[adjustedAxis] > 0) ? action.dir : -action.dir;
+
+//     return {adjustedAxis, action.layer, adjustedDir};
+// }
+
 inline void action_s::operator=(const action_s &other) {
     axis = other.axis;
-    slice = other.slice;
+    layer = other.layer;
     dir = other.dir;
 }
 
 inline action_s action_s::operator*(const float clock) const {
     return {
         axis,
-        slice,
+        layer,
         dir * clock
     };
 }
