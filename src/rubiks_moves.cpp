@@ -52,6 +52,8 @@ void Rubiks_moves::Randomize(sf::Event *event) {
             event->key.code == sf::Keyboard::M) {
             randomizing = true;
             animation_speed = RUBIKS_CUBE_RANDOM_MOVE_SPEED;
+            if (!random_actions.empty())
+                random_actions.clear();
             std::srand(std::time(nullptr));
             for (int i = 0; i < RUBIKS_CUBE_RANDOM_MOVE_NUMBER; i++) {
                 int rand = std::rand() % all_rubiks_possible_actions.size();

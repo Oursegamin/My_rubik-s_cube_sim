@@ -52,12 +52,20 @@ MATHS		=	-lm
 
 LIBS		=	$(LDLIBS) $(GRAPHICS) $(GLXFLAGS) $(MATHS)
 
+WINLIBS		=	-LC:/SFML/lib $(GRAPHICS) -lopengl32 -lgdi32
+
 CC			=	g++
 
 all: $(NAME)
 
 $(NAME):	buildlib	$(OBJ)
 	$(CC) $(CXXFLAGS) $(CPPFLAGS) -o $@ $(OBJ) $(LIBS)
+
+build_windows: buildlib $(OBJ)
+	$(CC) $(CXXFLAGS) $(CPPFLAGS) -o $(NAME).exe $(OBJ) $(WINLIBS)
+
+run_windows: build_windows
+	./$(NAME).exe
 
 buildlib:
 	make -C ./lib
@@ -103,4 +111,4 @@ tests_run: unit_tests
 		./unit_tests
 
 .PHONY: all clean fclean re valgrind unit_tests tests_run cleantest
-		buildlibtest buildtest buildlib
+		buildlibtest buildtest buildlib build_windows run_windows
