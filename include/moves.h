@@ -90,7 +90,8 @@ UNUSED static std::vector<action_t> actions = {
     RUBIKS_MOVE_FRONT,
     RUBIKS_MOVE_BACK,
     RUBIKS_MOVE_MID_H,
-    RUBIKS_MOVE_MID_V
+    RUBIKS_MOVE_MID_V,
+    RUBIKS_MOVE_MID_D,
 };
 
 UNUSED static std::vector<action_t> all_rubiks_possible_actions = {
@@ -124,8 +125,9 @@ UNUSED static std::vector<sf::Keyboard::Key> keyboard_moves = {
     sf::Keyboard::D,
     sf::Keyboard::A,
     sf::Keyboard::E,
-    sf::Keyboard::R,
-    sf::Keyboard::F
+    sf::Keyboard::W,
+    sf::Keyboard::C,
+    sf::Keyboard::X,
 };
 
 UNUSED static std::vector<Rubiks_faces_t> clockwise_moves = {
@@ -136,7 +138,8 @@ UNUSED static std::vector<Rubiks_faces_t> clockwise_moves = {
     RUBIKS_FRONT,
     RUBIKS_BACK,
     RUBIKS_MID_H,
-    RUBIKS_MID_V
+    RUBIKS_MID_V,
+    RUBIKS_MID_D,
 };
 
 UNUSED static std::vector<sf::Keyboard::Key> numpadkey_moves = {

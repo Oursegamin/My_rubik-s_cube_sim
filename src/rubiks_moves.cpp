@@ -70,7 +70,8 @@ int Rubiks_moves::Get_true_face(Vector3f rotated_vector) {
 
 action_t Rubiks_moves::Get_real_action(const Matrix4f &current_matrix, const Rubiks_faces_t face) {
     Rubiks_faces_t taken_face = face >= RUBIKS_MID_H ?
-        (face == RUBIKS_MID_H ? RUBIKS_TOP : RUBIKS_LEFT) : face;
+        (face == RUBIKS_MID_H ? RUBIKS_TOP :
+        (face == RUBIKS_MID_V ? RUBIKS_LEFT : RUBIKS_FRONT)) : face;
     int index = Get_true_face(current_matrix.TransformDirection(orginals_faces_vector[taken_face]));
 
     action_t action = actions[index];
