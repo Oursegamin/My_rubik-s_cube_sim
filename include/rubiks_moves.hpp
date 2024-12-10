@@ -18,6 +18,10 @@ class Rubiks_moves {
     bool randomizing = false;
     std::vector<action_t> random_actions;
 
+    int Get_true_face(Vector3f reotated_vector);
+    action_t Get_real_action(const Matrix4f &current_matrix, const Rubiks_faces_t face);
+
+
     protected:
         bool rotating = false;
         Matrix4f current_matrix; 

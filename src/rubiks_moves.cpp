@@ -22,51 +22,6 @@ action_s::action_s(const action_s &other) {
 
 action_s::~action_s() {}
 
-// void createRotationMatrix(const Vector3f angles, float matrix[3][3]) {
-//     float cx = std::cos(angles.x), sx = std::sin(angles.x);
-//     float cy = std::cos(angles.y), sy = std::sin(angles.y);
-//     float cz = std::cos(angles.z), sz = std::sin(angles.z);
-
-//     matrix[0][0] = cy * cz;
-//     matrix[0][1] = cz * sx * sy - cx * sz;
-//     matrix[0][2] = cx * cz * sy + sx * sz;
-
-//     matrix[1][0] = cy * sz;
-//     matrix[1][1] = cx * cz + sx * sy * sz;
-//     matrix[1][2] = -cz * sx + cx * sy * sz;
-
-//     matrix[2][0] = -sy;
-//     matrix[2][1] = cy * sx;
-//     matrix[2][2] = cx * cy;
-// }
-
-// action_t adjustAction(const Vector3f angles, const action_t &action) {
-//     float rotationMatrix[3][3];
-//     createRotationMatrix(angles, rotationMatrix);
-
-//     int originalAxis = action.axis;
-//     float originalDir[3] = {0.0f, 0.0f, 0.0f};
-//     originalDir[originalAxis] = 1.0f;
-
-//     float rotatedDir[3] = {0.0f, 0.0f, 0.0f};
-//     for (int i = 0; i < 3; ++i) {
-//         for (int j = 0; j < 3; ++j) {
-//             rotatedDir[i] += rotationMatrix[i][j] * originalDir[j];
-//         }
-//     }
-
-//     int adjustedAxis = 0;
-//     for (int i = 0; i < 3; ++i) {
-//         if (std::abs(rotatedDir[i]) > std::abs(rotatedDir[adjustedAxis])) {
-//             adjustedAxis = i;
-//         }
-//     }
-
-//     float adjustedDir = (rotatedDir[adjustedAxis] > 0) ? action.dir : -action.dir;
-
-//     return {adjustedAxis, action.layer, adjustedDir};
-// }
-
 inline void action_s::operator=(const action_s &other) {
     axis = other.axis;
     layer = other.layer;
@@ -88,6 +43,45 @@ inline void action_s::operator*=(const float clock) {
 Rubiks_moves::Rubiks_moves() {}
 
 Rubiks_moves::~Rubiks_moves() {}
+
+
+int Rubiks_moves::Get_true_face(Vector3f rotated_vector) {
+    int index = 0;
+    float current_max = 0;
+
+    float dots[6] = {
+        rotated_vector.Dot(ORIGINAL_TOP),
+        rotated_vector.Dot(ORIGINAL_BOTTOM),
+        rotated_vector.Dot(ORIGINAL_LEFT),
+        rotated_vector.Dot(ORIGINAL_RIGHT),
+        rotated_vector.Dot(ORIGINAL_FRONT),
+        rotated_vector.Dot(ORIGINAL_BACK),
+    };
+
+    for (int i = 0; i < 6; i++) {
+        if (current_max < dots[i]) {
+            index = i;
+            current_max = dots[i];
+        }
+    }
+
+    return index;
+}
+
+action_t Rubiks_moves::Get_real_action(const Matrix4f &current_matrix, const Rubiks_faces_t face) {
+    Rubiks_faces_t taken_face = face >= RUBIKS_MID_H ?
+        (face == RUBIKS_MID_H ? RUBIKS_TOP : RUBIKS_LEFT) : face;
+    int index = Get_true_face(current_matrix.TransformDirection(orginals_faces_vector[taken_face]));
+
+    action_t action = actions[index];
+    if (face >= RUBIKS_MID_H)
+        return (action_t){
+            action.axis,
+            1,
+            face == RUBIKS_MID_V ? action.dir * -1 : action.dir};
+    return action;
+}
+
 
 void Rubiks_moves::Randomize(sf::Event *event) {
     if (rotating)
@@ -142,7 +136,7 @@ void Rubiks_moves::Moves(sf::Event *event, action_t *action) {
         for (size_t i = 0; i < keyboard_moves.size(); i++) {
             if (event->key.code == keyboard_moves[i]) {
                 rotating = true;
-                *action = clockwise_moves[i] * clockwise;
+                *action = Get_real_action(current_matrix, clockwise_moves[i]) * clockwise;
                 return;
             }
         }
@@ -151,7 +145,7 @@ void Rubiks_moves::Moves(sf::Event *event, action_t *action) {
         for (size_t i = 0; i < numpadkey_moves.size(); i++) {
             if (event->key.code == numpadkey_moves[i]) {
                 rotating = true;
-                *action = numpad_moves[i] * clockwise;
+                *action = Get_real_action(current_matrix, numpad_moves[i]) * clockwise;
                 return;
             }
         }

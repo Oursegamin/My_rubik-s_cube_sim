@@ -13,6 +13,8 @@
 
 template<typename T>
 class Vector3 {
+    int length = 3;
+
     public:
         T x;
         T y;
@@ -28,6 +30,8 @@ class Vector3 {
         Vector3 Cross(const Vector3 &other);
         T Dot(const Vector3 &other);
 
+        T &operator[](const int index);
+        const T &operator[](const int index) const;
         Vector3 operator+(const Vector3 &other) const;
         Vector3 operator+=(const Vector3 &other);
         Vector3 operator-() const;
@@ -55,5 +59,6 @@ std::ostream &operator<<(std::ostream &out, const Vector3<T> &vector) {
 typedef Vector3<int>        Vector3i;
 typedef Vector3<unsigned>   Vector3u;
 typedef Vector3<float>      Vector3f;
+typedef Vector3<double>      Vector3d;
 
 #endif /* !VECTOR3_HPP_ */

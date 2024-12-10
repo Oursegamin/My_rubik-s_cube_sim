@@ -23,8 +23,8 @@ Rubiks::Rubiks(int width, UNUSED int height) {
             COLOR_YELLOW,       // bottom   side
         }
     );
-    // current_matrix = Matrix4f::Create_translation(pos);
-    // current_matrix *= Matrix4f::Create_rotation(Vector3f(x_angle, y_angle, z_angle));
+    current_matrix = Matrix4f::Create_translation(pos);
+    current_matrix = Matrix4f::Create_rotation(angles) * current_matrix;
     action = {0, 0, 0};
     this->font.loadFromFile(GENSHIN_IMPACT_FONT);
     this->title = SFML_globals::Create_text(
@@ -76,11 +76,16 @@ void Rubiks::_Rotate(sf::Vector2i start, sf::Vector2i end) {
 
     Vector3f delta = Vector3f(dx, -dy, 0);
 
-    float angle = delta.Length();
+    float angle = delta.Length() * RUBIKS_CUBE_SENSITIVITY;
 
-    Vector3f rot = Vector3f(0, 0, 1).Cross(delta).Normalize();
+    if (angle == 0.0f)
+        return;
 
-    angles += rot * angle;
+    Vector3f screenAxis = Vector3f(delta.y, -delta.x, 0).Normalize();
+
+    Vector3f cubeAxis = current_matrix.TransformDirection(screenAxis).Normalize();
+
+    current_matrix.Rotate(cubeAxis * angle);
 }
 
 void Rubiks::Rotate(sf::Event *event) {
@@ -139,10 +144,10 @@ void Rubiks::Manager() {
 void Rubiks::Draw() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // glLoadMatrixf(current_matrix.Get_list());
-    glTranslatef(pos.x, pos.y, pos.z);
-    glRotatef(angles.x, 1, 0, 0);
-    glRotatef(angles.y, 0, 1, 0);
+    glLoadMatrixf(current_matrix.Get_list());
+    // glTranslatef(pos.x, pos.y, pos.z);
+    // glRotatef(angles.x, 1, 0, 0);
+    // glRotatef(angles.y, 0, 1, 0);
 
     for (auto &cube : gl_cubes)
         cube.Draw(rotating, animation_angle, action);

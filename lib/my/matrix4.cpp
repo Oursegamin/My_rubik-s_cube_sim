@@ -140,7 +140,7 @@ void Matrix4<T>::RotateX(T angle) {
         0, 0,          0,          1
     );
 
-    *this *= rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 template<typename T>
@@ -152,7 +152,7 @@ void Matrix4<T>::RotateY(T angle) {
         0,         0, 0,          1
     );
 
-    *this *= rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 template<typename T>
@@ -164,7 +164,7 @@ void Matrix4<T>::RotateZ(T angle) {
         0,          0,         0,          1
     );
 
-    *this *= rotationMatrix;
+    *this = rotationMatrix * *this;
 }
 
 template<typename T>
@@ -259,6 +259,15 @@ Vector3f Matrix4<T>::ToEulerAngles(const Matrix4<T> &rotation_matrix) {
     }
 
     return Vector3f(x, y, z);
+}
+
+template<typename T>
+Vector3<T> Matrix4<T>::TransformDirection(const Vector3<T> &direction) const {
+    return Vector3<T>(
+        a11 * direction.x + a12 * direction.y + a13 * direction.z,
+        a21 * direction.x + a22 * direction.y + a23 * direction.z,
+        a31 * direction.x + a32 * direction.y + a33 * direction.z
+    );
 }
 
 template<typename T>
@@ -414,7 +423,7 @@ Vector4<T> Matrix4<T>::operator*(const Vector4<T> &other) const {
 
 template<typename T>
 void Matrix4<T>::operator*=(const Matrix4<T> &other) {
-    *this = other * *this;
+    *this = *this * other;
 }
 
 template<typename T>

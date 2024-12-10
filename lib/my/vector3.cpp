@@ -10,6 +10,7 @@
 template class Vector3<int>;
 template class Vector3<unsigned>;
 template class Vector3<float>;
+template class Vector3<double>;
 
 template<typename T>
 Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
@@ -49,6 +50,33 @@ inline Vector3<T> Vector3<T>::Cross(const Vector3<T> &other) {
 template<typename T>
 inline T Vector3<T>::Dot(const Vector3<T> &other) {
     return x * other.x + y * other.y + z * other.z;
+}
+
+
+//=============================================================================
+// OPERATORS
+
+
+template<typename T>
+inline T &Vector3<T>::operator[](const int index) {
+    if (index == 0)
+        return x;
+    if (index == 1)
+        return y;
+    if (index == 2)
+        return z;
+    throw std::out_of_range("Index out of range");
+}
+
+template<typename T>
+inline const T &Vector3<T>::operator[](const int index) const {
+    if (index == 0)
+        return x;
+    if (index == 1)
+        return y;
+    if (index == 2)
+        return z;
+    throw std::out_of_range("Index out of range");
 }
 
 template<typename T>

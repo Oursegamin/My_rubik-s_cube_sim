@@ -55,6 +55,7 @@ class Matrix4 {
         void Frustum(const T left, const T right, const T bottom, const T top, const T near, const T far);
         void Perspective(const T fov, const T aspect, const T near, const T far);
         Vector3f ToEulerAngles() const;
+        Vector3<T> TransformDirection(const Vector3<T>& direction) const;
 
         T *Get_list() const;
         std::array<std::array<T, 4>, 4> Get_matrixed_list() const;
