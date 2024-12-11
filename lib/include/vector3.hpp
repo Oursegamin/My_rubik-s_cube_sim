@@ -30,6 +30,8 @@ class Vector3 {
         Vector3 Cross(const Vector3 &other);
         T Dot(const Vector3 &other);
 
+        T *Get_list() const;
+
         T &operator[](const int index);
         const T &operator[](const int index) const;
         Vector3 operator+(const Vector3 &other) const;

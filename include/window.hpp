@@ -19,7 +19,7 @@ class Window {
         Window(int width, int height, const std::string &title);
         ~Window();
 
-        // static sf::RenderWindow *Get_window();
+        static void Clear();
         static sf::Vector2i Get_size();
 };
 

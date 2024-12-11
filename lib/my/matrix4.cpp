@@ -116,9 +116,9 @@ Matrix4<T> Matrix4<T>::Inverse() const {
 
 template<typename T>
 void Matrix4<T>::Translate(const Vector3<T> &t) {
-    a41 += a11 * t.x + a12 * t.y + a13 * t.z;
-    a42 += a21 * t.x + a22 * t.y + a23 * t.z;
-    a43 += a31 * t.x + a32 * t.y + a33 * t.z;
+    a41 += t.x;
+    a42 += t.y;
+    a43 += t.z;
 }
 
 template<typename T>
@@ -126,9 +126,7 @@ void Matrix4<T>::Scale(const Vector3<T> &s) {
     if (s.x == 1 && s.y == 1 && s.z == 1)
         return;
 
-    a11 *= s.x; a12 *= s.x; a13 *= s.x; a14 *= s.x;
-    a21 *= s.y; a22 *= s.y; a23 *= s.y; a24 *= s.y;
-    a31 *= s.z; a32 *= s.z; a33 *= s.z; a34 *= s.z;
+    *this = Create_scale(s) * *this;
 }
 
 template<typename T>

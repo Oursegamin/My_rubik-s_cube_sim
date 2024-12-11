@@ -13,7 +13,7 @@ using namespace std;
 Rubiks::Rubiks(int width, UNUSED int height) {
     Init_cubes(
         3,
-        1.5,
+        1,
         new colors_t [6]{
             COLOR_ORANGE,       // back     side
             COLOR_GREEN,        // right    side
@@ -23,9 +23,15 @@ Rubiks::Rubiks(int width, UNUSED int height) {
             COLOR_YELLOW,       // bottom   side
         }
     );
-    current_matrix = Matrix4f::Create_translation(pos);
-    current_matrix = Matrix4f::Create_rotation(angles) * current_matrix;
     action = {0, 0, 0};
+    scale = 1.5;
+    glLineWidth(RUBIKS_CUBE_LINES_WIDTH * scale);
+    glPointSize(RUBIKS_CUBE_POINTS_WIDTH * scale);
+    current_matrix = (
+        Matrix4f::Create_scale(Vector3f(scale, scale, scale)) *
+        Matrix4f::Create_rotation(angles) *
+        Matrix4f::Create_translation(pos)
+    );
     this->font.loadFromFile(GENSHIN_IMPACT_FONT);
     this->title = SFML_globals::Create_text(
         RUBIKS_TITLE,
@@ -56,7 +62,7 @@ void Rubiks::Init_cubes(int size, float scale, colors_t colors[6]) {
 
 void Rubiks::Run() {
     while (Window::window->isOpen()) {
-        this->Clear_window(sf::Color(173, 216, 230));
+        Window::Clear();
         this->Manager();
         this->Events();
         this->Draw();
@@ -64,13 +70,27 @@ void Rubiks::Run() {
     }
 }
 
-void Rubiks::Clear_window(sf::Color color) {
-    // Window::window->clear(color);
-    (void)color;
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void Rubiks::Translation(sf::Event *event) {
+    if (event->type == sf::Event::MouseButtonPressed &&
+        event->mouseButton.button == sf::Mouse::Right) {
+        this->start = this->mouse.getPosition(*Window::window);
+        shifting = true;
+    }
+    if (shifting && event->type == sf::Event::MouseMoved) {
+        this->end = this->mouse.getPosition(*Window::window);
+        current_matrix.Translate(Vector3f(
+            (end.x - start.x) * RUBIKS_CUBE_TRANSLATION_SENSITIVITY,
+            -(end.y - start.y) * RUBIKS_CUBE_TRANSLATION_SENSITIVITY,
+            0
+        ));
+        start = end;
+    }
+    if (event->type == sf::Event::MouseButtonReleased &&
+        event->mouseButton.button == sf::Mouse::Right)
+        shifting = false;
 }
 
-void Rubiks::_Rotate(sf::Vector2i start, sf::Vector2i end) {
+void Rubiks::Apply_rotation(sf::Vector2i start, sf::Vector2i end) {
     float dx = end.x - start.x;
     float dy = end.y - start.y;
 
@@ -96,7 +116,7 @@ void Rubiks::Rotate(sf::Event *event) {
     }
     if (moving && event->type == sf::Event::MouseMoved) {
         this->end = this->mouse.getPosition(*Window::window);
-        _Rotate(start, end);
+        Apply_rotation(start, end);
         start = end;
     }
     if (event->type == sf::Event::MouseButtonReleased &&
@@ -104,12 +124,28 @@ void Rubiks::Rotate(sf::Event *event) {
         moving = false;
 }
 
+void Rubiks::Scale(sf::Event *event) {
+    if (event->type == sf::Event::MouseWheelScrolled) {
+        float scale_factor = 1.0f + event->mouseWheelScroll.delta * -RUBIKS_CUBE_SENSITIVITY;
+        scale *= scale_factor;
+        glLineWidth(RUBIKS_CUBE_LINES_WIDTH * scale);
+        glPointSize(RUBIKS_CUBE_POINTS_WIDTH * scale);
+        current_matrix.Scale(Vector3f(scale_factor, scale_factor, scale_factor));
+    }
+}
+
+void Rubiks::Transform(sf::Event *event) {
+    Translation(event);
+    Rotate(event);
+    Scale(event);
+}
+
 void Rubiks::Events() {
     sf::Event event;
 
     while (Window::window->pollEvent(event)) {
         Window_events(&event);
-        Rotate(&event);
+        Transform(&event);
         Randomize(&event);
         Moves(&event, &action);
     }
@@ -145,9 +181,6 @@ void Rubiks::Draw() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glLoadMatrixf(current_matrix.Get_list());
-    // glTranslatef(pos.x, pos.y, pos.z);
-    // glRotatef(angles.x, 1, 0, 0);
-    // glRotatef(angles.y, 0, 1, 0);
 
     for (auto &cube : gl_cubes)
         cube.Draw(rotating, animation_angle, action);

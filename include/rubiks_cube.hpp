@@ -30,12 +30,14 @@ class Rubiks : public Rubiks_moves {
     sf::Text title;
 
     bool moving = false;
+    bool shifting = false;
     sf::Vector2i start;
     sf::Vector2i end;
     sf::Mouse mouse;
 
     std::vector<GL_cube> gl_cubes;
 
+    float scale = 1.f;
     action_t action;
     Vector3f pos = Vector3f(0.f, 0.f, -40.f);
     Vector3f angles = {
@@ -50,10 +52,12 @@ class Rubiks : public Rubiks_moves {
         void Init_cubes(int size, float scale, colors_t colors[6]);
 
         void Run();
-        void Clear_window(sf::Color color = sf::Color::Black);
 
-        void _Rotate(sf::Vector2i start, sf::Vector2i end);
+        void Translation(sf::Event *event);
         void Rotate(sf::Event *event);
+        void Apply_rotation(sf::Vector2i start, sf::Vector2i end);
+        void Scale(sf::Event *event);
+        void Transform(sf::Event *event);
 
         void Events();
         void Window_events(sf::Event *event);

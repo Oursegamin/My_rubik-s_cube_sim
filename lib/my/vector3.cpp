@@ -52,6 +52,11 @@ inline T Vector3<T>::Dot(const Vector3<T> &other) {
     return x * other.x + y * other.y + z * other.z;
 }
 
+template<typename T>
+T *Vector3<T>::Get_list() const {
+    return new T[3]{x, y, z};
+}
+
 
 //=============================================================================
 // OPERATORS

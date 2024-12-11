@@ -15,6 +15,21 @@
 
 #include "macros.h"
 
+// RUBIKS CUBE ROTATION ANGLES               
+#define RUBIKS_CUBE_X_ANGLE -M_PI / 9.f
+#define RUBIKS_CUBE_Y_ANGLE M_PI / 6.f
+#define RUBIKS_CUBE_Z_ANGLE 0.f
+
+#define RUBIKS_CUBE_SENSITIVITY 0.01f
+#define RUBIKS_CUBE_TRANSLATION_SENSITIVITY 0.025f
+#define RUBIKS_CUBE_DEFAULT_MOVE_SPEED 10
+
+#define RUBIKS_CUBE_LINES_WIDTH 6
+#define RUBIKS_CUBE_POINTS_WIDTH RUBIKS_CUBE_LINES_WIDTH / 2
+
+#define RUBIKS_CUBE_RANDOM_MOVE_NUMBER 75
+#define RUBIKS_CUBE_RANDOM_MOVE_SPEED 45
+
 typedef enum Rubiks_faces_s {
     RUBIKS_TOP,
     RUBIKS_BOTTOM,
@@ -42,17 +57,6 @@ typedef struct action_s {
         action_s operator*(const float clock) const;
         void operator*=(const float clock);
 } action_t;
-
-
-#define RUBIKS_CUBE_X_ANGLE -M_PI / 9.f
-#define RUBIKS_CUBE_Y_ANGLE M_PI / 6.f
-#define RUBIKS_CUBE_Z_ANGLE 0.f
-
-#define RUBIKS_CUBE_SENSITIVITY 0.01f
-#define RUBIKS_CUBE_DEFAULT_MOVE_SPEED 10
-
-#define RUBIKS_CUBE_RANDOM_MOVE_NUMBER 75
-#define RUBIKS_CUBE_RANDOM_MOVE_SPEED 45
 
 #define RUBIKS_MOVE_TOP     (action_t){1, 2, -1}
 #define RUBIKS_MOVE_BOTTOM  (action_t){1, 0,  1}

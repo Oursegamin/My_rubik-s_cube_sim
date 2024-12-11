@@ -32,6 +32,10 @@ Window::~Window() {
     window->close();
 }
 
+void Window::Clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 sf::Vector2i Window::Get_size() {
     return window_size;
 }

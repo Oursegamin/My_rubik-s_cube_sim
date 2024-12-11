@@ -15,6 +15,7 @@ GL_cube::GL_cube(float size, float scale, int point[3], colors_t colors[6]) {
         current_point[i] = point[i];
     }
     Set_vertices(size);
+    Set_visible_faces();
     for (int i = 0; i < 6; i++) {
         if (colors[i] == COLORS_END) {
             for (int j = i; j < 6; j++)
@@ -38,6 +39,23 @@ void GL_cube::Set_vertices(float size) {
     }
 }
 
+void GL_cube::Set_visible_faces() {
+    // Face Top (y == size - 1)
+    visible_faces[FACE_TOP] = current_point[1] == size - 1 ? true : false;
+    // Face Bottom (y == 0)
+    visible_faces[FACE_BOTTOM] = current_point[1] == 0 ? true : false;
+
+    // Face Front (z == size - 1)
+    visible_faces[FACE_FRONT] = current_point[2] == size - 1 ? true : false;
+    // Face Back (z == 0)
+    visible_faces[FACE_BACK] = current_point[2] == 0 ? true : false;
+
+    // Face Left (x == 0)
+    visible_faces[FACE_LEFT] = current_point[0] == size - 1 ? true : false;
+    // Face Right (x == cube_size - 1)
+    visible_faces[FACE_RIGHT] = current_point[0] == 0 ? true : false;
+}
+
 bool GL_cube::Is_affected(action_t action) const {
     return current_point[action.axis] == action.layer;
 }
@@ -52,7 +70,7 @@ void GL_cube::Rotate(float angle, action_t action) const {
 }
 
 float *GL_cube::Transform_mat() const {
-    Matrix4f s = rotation;
+    Matrix4f s(rotation);
     s.a11 *= scale, s.a12 *= scale, s.a13 *= scale;
     s.a21 *= scale, s.a22 *= scale, s.a23 *= scale;
     s.a31 *= scale, s.a32 *= scale, s.a33 *= scale;
@@ -84,16 +102,43 @@ void GL_cube::Update(action_t action) {
     current_point[j] = action.dir > 0 ? tmp : size - 1 - tmp;
 }
 
+void GL_cube::Draw_points() {
+    glBegin(GL_POINTS);
+    for (size_t i = 0; i < faces.size(); i++) {
+        if (!visible_faces[i])
+            continue;
+        for (size_t j = 0; j < faces[i].size(); j++) {
+            glColor3fv(colors_codes[COLOR_BLACK]);
+            glVertex3fv(vertices[faces[i][j]].Get_list());
+        }
+    }
+    glEnd();
+}
+
+void GL_cube::Draw_lines() {
+    glBegin(GL_LINES);
+    for (size_t i = 0; i < faces.size(); i++) {
+        if (!visible_faces[i])
+            continue;
+        glColor3fv(colors_codes[COLOR_BLACK]);
+        for (size_t j = 0; j < faces[i].size(); j++) {
+            glVertex3fv(vertices[faces[i][j]].Get_list());
+            glVertex3fv(vertices[faces[i][(j + 1) % faces[i].size()]].Get_list());
+        }
+    }
+    glEnd();
+
+    Draw_points();
+}
+
 void GL_cube::Draw_cube() {
     glBegin(GL_QUADS);
     for (size_t i = 0; i < faces.size(); i++) {
+        if (!visible_faces[i])
+            continue;
         glColor3fv(faces_colors[i]);
         for (size_t j = 0; j < faces[i].size(); j++) {
-            glVertex3f(
-                vertices[faces[i][j]].x,
-                vertices[faces[i][j]].y,
-                vertices[faces[i][j]].z
-            );
+            glVertex3fv(vertices[faces[i][j]].Get_list());
         }
     }
     glEnd();
@@ -108,6 +153,7 @@ void GL_cube::Draw(bool rotating, float angle, action_t action) {
     glMultMatrixf(Transform_mat());
 
     Draw_cube();
+    Draw_lines();
 
     glPopMatrix();
 }
