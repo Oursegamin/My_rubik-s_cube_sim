@@ -14,20 +14,26 @@ template Matrix3<float>::Matrix3(const Matrix3<int> &other);
 template void Matrix3<float>::operator=<int>(const Matrix3<int> &);
 
 template<typename T>
-Matrix3<T>::Matrix3(T a11, T a12, T a13, T a21, T a22, T a23, T a31, T a32, T a33) :
+Matrix3<T>::Matrix3(
+    T a11, T a12, T a13,
+    T a21, T a22, T a23,
+    T a31, T a32, T a33
+) :
     a11(a11), a12(a12), a13(a13),
     a21(a21), a22(a22), a23(a23),
     a31(a31), a32(a32), a33(a33) {}
 
 template<typename T>
-Matrix3<T>::Matrix3(const std::array<std::array<T, 3>, 3> matrix) {
+Matrix3<T>::Matrix3(const std::array<std::array<T, 3>, 3> matrix)
+{
     a11 = matrix[0][0], a12 = matrix[0][1], a13 = matrix[0][2],
     a21 = matrix[1][0], a22 = matrix[1][1], a23 = matrix[1][2],
     a31 = matrix[2][0], a32 = matrix[2][1], a33 = matrix[2][2];
 }
 
 template<typename T>
-Matrix3<T>::Matrix3(const Matrix3 &other) {
+Matrix3<T>::Matrix3(const Matrix3 &other)
+{
     a11 = other.a11, a12 = other.a12, a13 = other.a13,
     a21 = other.a21, a22 = other.a22, a23 = other.a23,
     a31 = other.a31, a32 = other.a32, a33 = other.a33;
@@ -35,7 +41,8 @@ Matrix3<T>::Matrix3(const Matrix3 &other) {
 
 template<typename T>
 template<typename U>
-Matrix3<T>::Matrix3(const Matrix3<U> &other) {
+Matrix3<T>::Matrix3(const Matrix3<U> &other)
+{
     a11 = other.a11, a12 = other.a12, a13 = other.a13,
     a21 = other.a21, a22 = other.a22, a23 = other.a23,
     a31 = other.a31, a32 = other.a32, a33 = other.a33;
@@ -45,7 +52,8 @@ template<typename T>
 Matrix3<T>::~Matrix3() {}
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Set_identity() {
+Matrix3<T> Matrix3<T>::Set_identity()
+{
     a11 = 1, a12 = 0, a13 = 0;
     a21 = 0, a22 = 1, a23 = 0;
     a31 = 0, a32 = 0, a33 = 1;
@@ -53,21 +61,24 @@ Matrix3<T> Matrix3<T>::Set_identity() {
 }
 
 template<typename T>
-void Matrix3<T>::Transpose() {
+void Matrix3<T>::Transpose()
+{
     std::swap(a12, a21);
     std::swap(a13, a31);
     std::swap(a23, a32);
 }
 
 template<typename T>
-float Matrix3<T>::Determinant() const {
+float Matrix3<T>::Determinant() const
+{
     return (a11 * (a22 * a33 - a23 * a32)) -
            (a12 * (a21 * a33 - a23 * a31)) +
            (a13 * (a21 * a32 - a22 * a31));
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Inverse() const {
+Matrix3<T> Matrix3<T>::Inverse() const
+{
     float det = Determinant();
     if (det == 0)
         return Matrix3<T>();
@@ -80,7 +91,8 @@ Matrix3<T> Matrix3<T>::Inverse() const {
 }
 
 template<typename T>
-void Matrix3<T>::Translate(const Vector3<T> &v) {
+void Matrix3<T>::Translate(const Vector3<T> &v)
+{
 	if (v.x == 0 && v.y == 0)
         return;
 
@@ -90,7 +102,8 @@ void Matrix3<T>::Translate(const Vector3<T> &v) {
 }
 
 template<typename T>
-void Matrix3<T>::Scale(const Vector3<T> &s) {
+void Matrix3<T>::Scale(const Vector3<T> &s)
+{
     if (s.x == 1 && s.y == 1 && s.z == 1)
         return;
 
@@ -100,7 +113,8 @@ void Matrix3<T>::Scale(const Vector3<T> &s) {
 }
 
 template<typename T>
-void Matrix3<T>::RotateX(const T x) {
+void Matrix3<T>::RotateX(const T x)
+{
     Matrix3<T> rotation(
         1, 0, 0,
         0, cos(x), -sin(x),
@@ -110,7 +124,8 @@ void Matrix3<T>::RotateX(const T x) {
 }
 
 template<typename T>
-void Matrix3<T>::RotateY(const T y) {
+void Matrix3<T>::RotateY(const T y)
+{
     Matrix3<T> rotation(
         cos(y), 0, sin(y),
         0, 1, 0,
@@ -120,7 +135,8 @@ void Matrix3<T>::RotateY(const T y) {
 }
 
 template<typename T>
-void Matrix3<T>::RotateZ(const T z) {
+void Matrix3<T>::RotateZ(const T z)
+{
     Matrix3<T> rotation(
         cos(z), -sin(z), 0,
         sin(z), cos(z), 0,
@@ -130,14 +146,16 @@ void Matrix3<T>::RotateZ(const T z) {
 }
 
 template<typename T>
-void Matrix3<T>::Rotate(const Vector3<T> &angles) {
+void Matrix3<T>::Rotate(const Vector3<T> &angles)
+{
     RotateX(angles.x);
     RotateY(angles.y);
     RotateZ(angles.z);
 }
 
 template<typename T>
-T *Matrix3<T>::Get_list() const {
+T *Matrix3<T>::Get_list() const
+{
     return new T[3 * 3]{
         a11, a12, a13,
         a21, a22, a23,
@@ -146,7 +164,8 @@ T *Matrix3<T>::Get_list() const {
 }
 
 template<typename T>
-std::array<std::array<T, 3>, 3> Matrix3<T>::Get_matrixed_list() const {
+std::array<std::array<T, 3>, 3> Matrix3<T>::Get_matrixed_list() const
+{
     return {{
         {a11, a12, a13},
         {a21, a22, a23},
@@ -155,7 +174,8 @@ std::array<std::array<T, 3>, 3> Matrix3<T>::Get_matrixed_list() const {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Create_identity() {
+Matrix3<T> Matrix3<T>::Create_identity()
+{
     return Matrix3<T> (
         1, 0, 0,
         0, 1, 0,
@@ -164,7 +184,8 @@ Matrix3<T> Matrix3<T>::Create_identity() {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Create_translation(const Vector3<T> &v) {
+Matrix3<T> Matrix3<T>::Create_translation(const Vector3<T> &v)
+{
     return Matrix3<T> (
         1, 0, 0,
         0, 1, 0,
@@ -173,7 +194,8 @@ Matrix3<T> Matrix3<T>::Create_translation(const Vector3<T> &v) {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Create_scale(const T &s) {
+Matrix3<T> Matrix3<T>::Create_scale(const T &s)
+{
     return Matrix3<T> (
         s, 0, 0,
         0, s, 0,
@@ -182,7 +204,8 @@ Matrix3<T> Matrix3<T>::Create_scale(const T &s) {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Create_scale(const Vector3<T> &s) {
+Matrix3<T> Matrix3<T>::Create_scale(const Vector3<T> &s)
+{
     return Matrix3<T> (
         s.x, 0, 0,
         0, s.y, 0,
@@ -191,7 +214,8 @@ Matrix3<T> Matrix3<T>::Create_scale(const Vector3<T> &s) {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::Create_rotation(const Vector3<T> &angles) {
+Matrix3<T> Matrix3<T>::Create_rotation(const Vector3<T> &angles)
+{
     Matrix3<T> mat = Matrix3<T>::Create_identity();
     mat.Rotate(angles);
     return mat;
@@ -203,7 +227,8 @@ Matrix3<T> Matrix3<T>::Create_rotation(const Vector3<T> &angles) {
 
 
 template<typename T>
-Matrix3<T> Matrix3<T>::operator+(const Matrix3<T> &other) {
+Matrix3<T> Matrix3<T>::operator+(const Matrix3<T> &other)
+{
     return Matrix3<T> (
         a11 + other.a11, a12 + other.a12, a13 + other.a13,
         a21 + other.a21, a22 + other.a22, a23 + other.a23,
@@ -212,14 +237,16 @@ Matrix3<T> Matrix3<T>::operator+(const Matrix3<T> &other) {
 }
 
 template<typename T>
-void Matrix3<T>::operator+=(const Matrix3<T> &other) {
+void Matrix3<T>::operator+=(const Matrix3<T> &other)
+{
     a11 += other.a11, a12 += other.a12, a13 += other.a13;
     a21 += other.a21, a22 += other.a22, a23 += other.a23;
     a31 += other.a31, a32 += other.a32, a33 += other.a33;
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::operator-() {
+Matrix3<T> Matrix3<T>::operator-()
+{
     return Matrix3<T> (
         -a11, -a12, -a13,
         -a21, -a22, -a23,
@@ -228,7 +255,8 @@ Matrix3<T> Matrix3<T>::operator-() {
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::operator-(const Matrix3<T> &other) {
+Matrix3<T> Matrix3<T>::operator-(const Matrix3<T> &other)
+{
     return Matrix3<T> (
         a11 - other.a11, a12 - other.a12, a13 - other.a13,
         a21 - other.a21, a22 - other.a22, a23 - other.a23,
@@ -237,14 +265,16 @@ Matrix3<T> Matrix3<T>::operator-(const Matrix3<T> &other) {
 }
 
 template<typename T>
-void Matrix3<T>::operator-=(const Matrix3<T> &other) {
+void Matrix3<T>::operator-=(const Matrix3<T> &other)
+{
     a11 -= other.a11, a12 -= other.a12, a13 -= other.a13;
     a21 -= other.a21, a22 -= other.a22, a23 -= other.a23;
     a31 -= other.a31, a32 -= other.a32, a33 -= other.a33;
 }
 
 template<typename T>
-Matrix3<T> Matrix3<T>::operator*(const Matrix3<T> &other) {
+Matrix3<T> Matrix3<T>::operator*(const Matrix3<T> &other)
+{
     return Matrix3<T> (
         a11 * other.a11 + a12 * other.a21 + a13 * other.a31,
         a11 * other.a12 + a12 * other.a22 + a13 * other.a32,
@@ -261,7 +291,8 @@ Matrix3<T> Matrix3<T>::operator*(const Matrix3<T> &other) {
 }
 
 template<typename T>
-void Matrix3<T>::operator*=(const Matrix3<T> &other) {
+void Matrix3<T>::operator*=(const Matrix3<T> &other)
+{
     *this = *this * other;
 }
 
@@ -280,7 +311,8 @@ void Matrix3<T>::operator*=(const Matrix3<T> &other) {
 // }
 
 template<typename T>
-void Matrix3<T>::operator=(const Matrix3 &other) {
+void Matrix3<T>::operator=(const Matrix3 &other)
+{
     a11 = other.a11, a12 = other.a12, a13 = other.a13;
     a21 = other.a21, a22 = other.a22, a23 = other.a23;
     a31 = other.a31, a32 = other.a32, a33 = other.a33;
@@ -288,14 +320,16 @@ void Matrix3<T>::operator=(const Matrix3 &other) {
 
 template<typename T>
 template<typename U>
-void Matrix3<T>::operator=(const Matrix3<U> &other) {
+void Matrix3<T>::operator=(const Matrix3<U> &other)
+{
     a11 = static_cast<T>(other.a11), a12 = static_cast<T>(other.a12), a13 = static_cast<T>(other.a13);
     a21 = static_cast<T>(other.a21), a22 = static_cast<T>(other.a22), a23 = static_cast<T>(other.a23);
     a31 = static_cast<T>(other.a31), a32 = static_cast<T>(other.a32), a33 = static_cast<T>(other.a33);
 }
 
 template<typename T>
-bool Matrix3<T>::operator==(const Matrix3 &other) {
+bool Matrix3<T>::operator==(const Matrix3 &other)
+{
     return (
         a11 == other.a11 && a12 == other.a12 && a13 == other.a13 &&
         a21 == other.a21 && a22 == other.a22 && a23 == other.a23 &&
@@ -314,6 +348,7 @@ bool Matrix3<T>::operator==(const Matrix3 &other) {
 // }
 
 template<typename T>
-bool Matrix3<T>::operator!=(const Matrix3 &other) {
+bool Matrix3<T>::operator!=(const Matrix3 &other)
+{
     return!(*this == other);
 }

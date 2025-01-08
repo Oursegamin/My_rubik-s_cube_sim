@@ -17,6 +17,8 @@
 
 #include "assets.h"
 #include "window.hpp"
+#include "help.hpp"
+#include "settings.hpp"
 #include "rubiks_moves.hpp"
 #include "gl_cube.hpp"
 
@@ -24,8 +26,20 @@
 #define RUBIKS_TITLE_SIZE 50
 #define RUBIKS_CUBE_SIZE 3
 #define RUBIKS_CUBE_UNIQUE_CUBES(size) pow(size, 3) - pow(size - 2, 3)
+#define RUBIKS_CUBE_TEXT_COLOR sf::Color(75, 75, 255)
 
-class Rubiks : public Rubiks_moves {
+typedef enum screen_mode_s {
+    RUBIKS_GAME,
+    // RUBIKS_MENU,
+    RUBIKS_HELP,
+    RUBIKS_SETTINGS,
+    RUBIKS_SCREEN_MODE_SIZE
+} screen_mode_t;
+
+class Rubiks : public Rubiks_moves
+{
+    Settings *settings;
+
     sf::Font font;
     sf::Text title;
 
@@ -47,8 +61,11 @@ class Rubiks : public Rubiks_moves {
     };
 
     public:
+        static screen_mode_t screen;
+
         Rubiks(int width, int height);
         ~Rubiks();
+        void Init(sf::Vector2f w_size);
         void Init_cubes(int size, float scale, colors_t colors[6]);
 
         void Run();
@@ -60,15 +77,11 @@ class Rubiks : public Rubiks_moves {
         void Transform(sf::Event *event);
 
         void Events();
-        void Window_events(sf::Event *event);
+        void Screen_events(sf::Event *event);
 
         void Manager();
 
         void Draw();
-
-        static sf::Vector2f Get_resize(float x, float y);
-        static sf::Vector2f Get_mouse_pos();
-        static sf::Vector2f Get_window_size();
 };
 
 #endif /*GAME_HPP_ */

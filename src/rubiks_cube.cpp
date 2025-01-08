@@ -10,7 +10,13 @@ using namespace std;
 #include "main.h"
 #include "SFML/OpenGL.hpp"
 
-Rubiks::Rubiks(int width, UNUSED int height) {
+screen_mode_t Rubiks::screen = RUBIKS_GAME;
+
+Rubiks::Rubiks(int width, UNUSED int height)
+{
+    settings = new Settings();
+
+    Init(sf::Vector2f(width, height));
     Init_cubes(
         3,
         1,
@@ -23,6 +29,12 @@ Rubiks::Rubiks(int width, UNUSED int height) {
             COLOR_YELLOW,       // bottom   side
         }
     );
+}
+
+Rubiks::~Rubiks() {}
+
+void Rubiks::Init(sf::Vector2f w_size)
+{
     action = {0, 0, 0};
     scale = 1.5;
     glLineWidth(RUBIKS_CUBE_LINES_WIDTH * scale);
@@ -36,15 +48,14 @@ Rubiks::Rubiks(int width, UNUSED int height) {
     this->title = SFML_globals::Create_text(
         RUBIKS_TITLE,
         &this->font,
-        this->Get_resize(width / 2, 75),
+        Window::Get_resize(w_size.x / 2, 75),
         RUBIKS_TITLE_SIZE,
-        sf::Color(75, 75, 255)
+        RUBIKS_CUBE_TEXT_COLOR
     );
 }
 
-Rubiks::~Rubiks() {}
-
-void Rubiks::Init_cubes(int size, float scale, colors_t colors[6]) {
+void Rubiks::Init_cubes(int size, float scale, colors_t colors[6])
+{
     for (int x = 0; x < size; x++) {
         for (int y = 0; y < size; y++) {
             for (int z = 0; z < size; z++) {
@@ -60,7 +71,8 @@ void Rubiks::Init_cubes(int size, float scale, colors_t colors[6]) {
     }
 }
 
-void Rubiks::Run() {
+void Rubiks::Run()
+{
     while (Window::window->isOpen()) {
         Window::Clear();
         this->Manager();
@@ -70,7 +82,8 @@ void Rubiks::Run() {
     }
 }
 
-void Rubiks::Translation(sf::Event *event) {
+void Rubiks::Translation(sf::Event *event)
+{
     if (event->type == sf::Event::MouseButtonPressed &&
         event->mouseButton.button == sf::Mouse::Right) {
         this->start = this->mouse.getPosition(*Window::window);
@@ -90,7 +103,8 @@ void Rubiks::Translation(sf::Event *event) {
         shifting = false;
 }
 
-void Rubiks::Apply_rotation(sf::Vector2i start, sf::Vector2i end) {
+void Rubiks::Apply_rotation(sf::Vector2i start, sf::Vector2i end)
+{
     float dx = end.x - start.x;
     float dy = end.y - start.y;
 
@@ -108,7 +122,8 @@ void Rubiks::Apply_rotation(sf::Vector2i start, sf::Vector2i end) {
     current_matrix.Rotate(cubeAxis * angle);
 }
 
-void Rubiks::Rotate(sf::Event *event) {
+void Rubiks::Rotate(sf::Event *event)
+{
     if (event->type == sf::Event::MouseButtonPressed &&
         event->mouseButton.button == sf::Mouse::Left) {
         this->start = this->mouse.getPosition(*Window::window);
@@ -124,7 +139,8 @@ void Rubiks::Rotate(sf::Event *event) {
         moving = false;
 }
 
-void Rubiks::Scale(sf::Event *event) {
+void Rubiks::Scale(sf::Event *event)
+{
     if (event->type == sf::Event::MouseWheelScrolled) {
         float scale_factor = 1.0f + event->mouseWheelScroll.delta * -RUBIKS_CUBE_SENSITIVITY;
         scale *= scale_factor;
@@ -134,37 +150,41 @@ void Rubiks::Scale(sf::Event *event) {
     }
 }
 
-void Rubiks::Transform(sf::Event *event) {
+void Rubiks::Transform(sf::Event *event)
+{
     Translation(event);
     Rotate(event);
     Scale(event);
 }
 
-void Rubiks::Events() {
+void Rubiks::Events()
+{
     sf::Event event;
 
     while (Window::window->pollEvent(event)) {
-        Window_events(&event);
-        Transform(&event);
-        Randomize(&event);
-        Moves(&event, &action);
+        Window::Events(&event);
+        Screen_events(&event);
+        if (screen == RUBIKS_GAME) {
+            Transform(&event);
+            Randomize(&event);
+            Moves(&event, &action);
+        } else if (screen == RUBIKS_SETTINGS)
+            settings->Events(&event);
     }
 }
 
-void Rubiks::Window_events(sf::Event *event) {
-    if (event->type == sf::Event::Closed)
-        Window::window->close();
-    if (event->type == sf::Event::KeyPressed) {
-        if (event->key.code == sf::Keyboard::BackSpace)
-            Window::window->close();
-    }
-    if (event->type == sf::Event::Resized) {
-        Window::window_size = sf::Vector2i(event->size.width, event->size.height);
-        glViewport(0, 0, event->size.width, event->size.height);
+void Rubiks::Screen_events(sf::Event *event)
+{
+    if (screen < RUBIKS_SCREEN_MODE_SIZE && event->type == sf::Event::KeyPressed) {
+        if (screen != RUBIKS_SETTINGS && event->key.code == settings->help_key)
+            settings->show_help = settings->show_help ? false : true;
+        if (event->key.code == settings->settings_key)
+            screen = screen == RUBIKS_GAME ? RUBIKS_SETTINGS : RUBIKS_GAME;
     }
 }
 
-void Rubiks::Manager() {
+void Rubiks::Manager()
+{
     Update_randomization(&action);
 
     if (rotating)
@@ -177,7 +197,8 @@ void Rubiks::Manager() {
     }
 }
 
-void Rubiks::Draw() {
+void Rubiks::Draw()
+{
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glLoadMatrixf(current_matrix.Get_list());
@@ -186,24 +207,13 @@ void Rubiks::Draw() {
         cube.Draw(rotating, animation_angle, action);
 
     Window::window->pushGLStates();
+
+    settings->Draw_help();
+
+    if (screen == RUBIKS_SETTINGS)
+        settings->Draw();
+
     Window::window->draw(this->title);
+
     Window::window->popGLStates();
-}
-
-sf::Vector2f Rubiks::Get_resize(float x, float y) {
-    sf::Vector2f window_size = Rubiks::Get_window_size();
-    return sf::Vector2f(
-        x * window_size.x / WINDOW_WIDTH,
-        y * window_size.y / WINDOW_HEIGHT
-    );
-}
-
-sf::Vector2f Rubiks::Get_mouse_pos() {
-    sf::Vector2f not_resize_pos = sf::Vector2f(sf::Mouse::getPosition(*Window::window));
-    sf::Vector2f window_size = Rubiks::Get_window_size();
-    return sf::Vector2f(not_resize_pos.x * window_size.x / WINDOW_WIDTH, not_resize_pos.y * window_size.y / WINDOW_HEIGHT);
-}
-
-sf::Vector2f Rubiks::Get_window_size() {
-    return sf::Vector2f(Window::Get_size());
 }

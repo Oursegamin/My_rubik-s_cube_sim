@@ -14,7 +14,8 @@ action_s::action_s(int axis, int layer, float dir) :
     layer(layer),
     dir(dir) {}
 
-action_s::action_s(const action_s &other) {
+action_s::action_s(const action_s &other)
+{
     axis = other.axis;
     layer = other.layer;
     dir = other.dir;
@@ -22,13 +23,15 @@ action_s::action_s(const action_s &other) {
 
 action_s::~action_s() {}
 
-inline void action_s::operator=(const action_s &other) {
+inline void action_s::operator=(const action_s &other)
+{
     axis = other.axis;
     layer = other.layer;
     dir = other.dir;
 }
 
-inline action_s action_s::operator*(const float clock) const {
+inline action_s action_s::operator*(const float clock) const
+{
     return {
         axis,
         layer,
@@ -36,7 +39,8 @@ inline action_s action_s::operator*(const float clock) const {
     };
 }
 
-inline void action_s::operator*=(const float clock) {
+inline void action_s::operator*=(const float clock)
+{
     *this = *this * clock;
 }
 
@@ -45,7 +49,8 @@ Rubiks_moves::Rubiks_moves() {}
 Rubiks_moves::~Rubiks_moves() {}
 
 
-int Rubiks_moves::Get_true_face(Vector3f rotated_vector) {
+int Rubiks_moves::Get_true_face(Vector3f rotated_vector)
+{
     int index = 0;
     float current_max = 0;
 
@@ -68,7 +73,9 @@ int Rubiks_moves::Get_true_face(Vector3f rotated_vector) {
     return index;
 }
 
-action_t Rubiks_moves::Get_real_action(const Matrix4f &current_matrix, const Rubiks_faces_t face) {
+action_t Rubiks_moves::Get_real_action(const Matrix4f &current_matrix,
+    const Rubiks_faces_t face)
+{
     Rubiks_faces_t taken_face = face >= RUBIKS_MID_H ?
         (face == RUBIKS_MID_H ? RUBIKS_TOP :
         (face == RUBIKS_MID_V ? RUBIKS_LEFT : RUBIKS_FRONT)) : face;
@@ -84,27 +91,29 @@ action_t Rubiks_moves::Get_real_action(const Matrix4f &current_matrix, const Rub
 }
 
 
-void Rubiks_moves::Randomize(sf::Event *event) {
+void Rubiks_moves::Randomize(sf::Event *event)
+{
     if (rotating)
         return;
-    if (!randomizing) {
-        if (event->type == sf::Event::KeyPressed &&
-            event->key.code == sf::Keyboard::M) {
-            randomizing = true;
-            animation_speed = RUBIKS_CUBE_RANDOM_MOVE_SPEED;
-            if (!random_actions.empty())
-                random_actions.clear();
-            std::srand(std::time(nullptr));
-            for (int i = 0; i < RUBIKS_CUBE_RANDOM_MOVE_NUMBER; i++) {
-                int rand = std::rand() % all_rubiks_possible_actions.size();
-                random_actions.push_back(all_rubiks_possible_actions[rand]);
-            }
-        } else
-            return;
+    if (!randomizing &&
+        event->type == sf::Event::KeyPressed &&
+        event->key.code == sf::Keyboard::R) {
+        randomizing = true;
+        animation_speed = RUBIKS_CUBE_RANDOM_MOVE_SPEED;
+        std::srand(std::time(nullptr));
+
+        if (!random_actions.empty())
+            random_actions.clear();
+
+        for (int i = 0; i < RUBIKS_CUBE_RANDOM_MOVE_NUMBER; i++) {
+            int rand = std::rand() % all_rubiks_possible_actions.size();
+            random_actions.push_back(all_rubiks_possible_actions[rand]);
+        }
     }
 }
 
-void Rubiks_moves::Update_randomization(action_t *action) {
+void Rubiks_moves::Update_randomization(action_t *action)
+{
     if (!randomizing || rotating)
         return;
     if (random_actions.empty()) {
@@ -118,7 +127,8 @@ void Rubiks_moves::Update_randomization(action_t *action) {
     }
 }
 
-void Rubiks_moves::Check_clockwise(sf::Event *event) {
+void Rubiks_moves::Check_clockwise(sf::Event *event)
+{
     if (event->key.code == sf::Keyboard::LShift ||
         event->key.code == sf::Keyboard::RShift) {
         if (clockwise != -1 && event->type == sf::Event::KeyPressed)
@@ -128,7 +138,8 @@ void Rubiks_moves::Check_clockwise(sf::Event *event) {
     }
 }
 
-void Rubiks_moves::Moves(sf::Event *event, action_t *action) {
+void Rubiks_moves::Moves(sf::Event *event, action_t *action)
+{
     Check_clockwise(event);
     if (rotating)
         return;

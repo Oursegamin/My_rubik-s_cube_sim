@@ -14,7 +14,8 @@
 #include "vector3.hpp"
 
 template<typename T>
-class Matrix3 {
+class Matrix3
+{
 
     public:
         T a11, a12, a13;

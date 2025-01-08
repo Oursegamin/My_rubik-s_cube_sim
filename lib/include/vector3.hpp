@@ -12,7 +12,8 @@
 #include <math.h>
 
 template<typename T>
-class Vector3 {
+class Vector3
+{
     int length = 3;
 
     public:

@@ -19,6 +19,7 @@ class SFML_globals
         static sf::Text Create_text(std::string text, sf::Font *font,
             sf::Vector2f pos, float size, sf::Color color);
         static void Set_text_mid_origin(sf::Text *text);
+        static void Set_text_mid_left_origin(sf::Text *text);
 
         static sf::Sprite Create_sprite(sf::Texture *texture, sf::Vector2f pos,
             sf::Vector2f scale = sf::Vector2f(1.f, 1.f));

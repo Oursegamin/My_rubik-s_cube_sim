@@ -15,6 +15,8 @@ SRC_LIB		=	$(wildcard lib/my/*.cpp)
 
 SRC_FILES	=	window.cpp									\
 				rubiks_cube.cpp								\
+				settings.cpp								\
+				help.cpp									\
 				rubiks_moves.cpp							\
 				gl_cube.cpp									\
 

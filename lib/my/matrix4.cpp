@@ -24,7 +24,8 @@ Matrix4<T>::Matrix4(
     a41(a41), a42(a42), a43(a43), a44(a44) {}
 
 template<typename T>
-Matrix4<T>::Matrix4(const std::array<std::array<T, 4>, 4> matrix) {
+Matrix4<T>::Matrix4(const std::array<std::array<T, 4>, 4> matrix)
+{
     a11 = matrix[0][0], a12 = matrix[0][1], a13 = matrix[0][2], a14 = matrix[0][3],
     a21 = matrix[1][0], a22 = matrix[1][1], a23 = matrix[1][2], a24 = matrix[1][3],
     a31 = matrix[2][0], a32 = matrix[2][1], a33 = matrix[2][2], a34 = matrix[2][3],
@@ -32,7 +33,8 @@ Matrix4<T>::Matrix4(const std::array<std::array<T, 4>, 4> matrix) {
 }
 
 template<typename T>
-Matrix4<T>::Matrix4(const Matrix4 &other) {
+Matrix4<T>::Matrix4(const Matrix4 &other)
+{
     a11 = other.a11, a12 = other.a12, a13 = other.a13, a14 = other.a14,
     a21 = other.a21, a22 = other.a22, a23 = other.a23, a24 = other.a24,
     a31 = other.a31, a32 = other.a32, a33 = other.a33, a34 = other.a34,
@@ -41,7 +43,8 @@ Matrix4<T>::Matrix4(const Matrix4 &other) {
 
 template<typename T>
 template<typename U>
-Matrix4<T>::Matrix4(const Matrix4<U> &other) {
+Matrix4<T>::Matrix4(const Matrix4<U> &other)
+{
     a11 = static_cast<T>(other.a11), a12 = static_cast<T>(other.a12), a13 = static_cast<T>(other.a13), a14 = static_cast<T>(other.a14),
     a21 = static_cast<T>(other.a21), a22 = static_cast<T>(other.a22), a23 = static_cast<T>(other.a23), a24 = static_cast<T>(other.a24),
     a31 = static_cast<T>(other.a31), a32 = static_cast<T>(other.a32), a33 = static_cast<T>(other.a33), a34 = static_cast<T>(other.a34),
@@ -52,7 +55,8 @@ template<typename T>
 Matrix4<T>::~Matrix4() {}
 
 template<typename T>
-void Matrix4<T>::Set_identity() {
+void Matrix4<T>::Set_identity()
+{
     a11 = 1, a12 = 0, a13 = 0, a14 = 0,
     a21 = 0, a22 = 1, a23 = 0, a24 = 0,
     a31 = 0, a32 = 0, a33 = 1, a34 = 0,
@@ -60,7 +64,8 @@ void Matrix4<T>::Set_identity() {
 }
 
 template<typename T>
-void Matrix4<T>::Transpose() {
+void Matrix4<T>::Transpose()
+{
     std::swap(a21, a12);
     std::swap(a31, a13);
     std::swap(a32, a23);
@@ -74,14 +79,16 @@ float Matrix4<T>::Determinant3x3(
     T b11, T b12, T b13,
     T b21, T b22, T b23,
     T b31, T b32, T b33
-) const {
+) const
+{
     return  b11 * (b22 * b33 - b23 * b32) -
             b12 * (b21 * b33 - b23 * b31) +
             b13 * (b21 * b32 - b22 * b31);
 }
 
 template<typename T>
-float Matrix4<T>::Determinant() const {
+float Matrix4<T>::Determinant() const
+{
     float m11 = Determinant3x3(a22, a23, a24, a32, a33, a34, a42, a43, a44);
     float m12 = Determinant3x3(a21, a23, a24, a31, a33, a34, a41, a43, a44);
     float m13 = Determinant3x3(a21, a22, a24, a31, a32, a34, a41, a42, a44);
@@ -91,7 +98,8 @@ float Matrix4<T>::Determinant() const {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Inverse() const {
+Matrix4<T> Matrix4<T>::Inverse() const
+{
     float det = Determinant();
     if (det == 0)
         return Matrix4<T>();
@@ -115,22 +123,24 @@ Matrix4<T> Matrix4<T>::Inverse() const {
 
 
 template<typename T>
-void Matrix4<T>::Translate(const Vector3<T> &t) {
+void Matrix4<T>::Translate(const Vector3<T> &t)
+{
     a41 += t.x;
     a42 += t.y;
     a43 += t.z;
 }
 
 template<typename T>
-void Matrix4<T>::Scale(const Vector3<T> &s) {
+void Matrix4<T>::Scale(const Vector3<T> &s)
+{
     if (s.x == 1 && s.y == 1 && s.z == 1)
         return;
-
     *this = Create_scale(s) * *this;
 }
 
 template<typename T>
-void Matrix4<T>::RotateX(T angle) {
+void Matrix4<T>::RotateX(T angle)
+{
     Matrix4<T> rotationMatrix(
         1, 0,          0,          0,
         0, cosf(angle), -sinf(angle), 0,
@@ -142,7 +152,8 @@ void Matrix4<T>::RotateX(T angle) {
 }
 
 template<typename T>
-void Matrix4<T>::RotateY(T angle) {
+void Matrix4<T>::RotateY(T angle)
+{
     Matrix4<T> rotationMatrix(
         cosf(angle), 0, sinf(angle), 0,
         0,         1, 0,          0,
@@ -154,7 +165,8 @@ void Matrix4<T>::RotateY(T angle) {
 }
 
 template<typename T>
-void Matrix4<T>::RotateZ(T angle) {
+void Matrix4<T>::RotateZ(T angle)
+{
     Matrix4<T> rotationMatrix(
         cosf(angle), -sinf(angle), 0,          0,
         sinf(angle), cosf(angle), 0,          0,
@@ -166,14 +178,17 @@ void Matrix4<T>::RotateZ(T angle) {
 }
 
 template<typename T>
-void Matrix4<T>::Rotate(const Vector3<T> &angles) {
+void Matrix4<T>::Rotate(const Vector3<T> &angles)
+{
     RotateX(angles.x);
     RotateY(angles.y);
     RotateZ(angles.z);
 }
 
 template<typename T>
-void Matrix4<T>::LookAt(const Vector3<T> &eye, const Vector3<T> &center, const Vector3<T> &up) {
+void Matrix4<T>::LookAt(const Vector3<T> &eye, const Vector3<T> &center,
+    const Vector3<T> &up)
+{
     Vector3<T> f = eye - center;
     f.Normalize();
     Vector3<T> s = f.Cross(up);
@@ -187,7 +202,9 @@ void Matrix4<T>::LookAt(const Vector3<T> &eye, const Vector3<T> &center, const V
 }
 
 template<typename T>
-void Matrix4<T>::Ortho(const T left, const T right, const T bottom, const T top, const T near, const T far) {
+void Matrix4<T>::Ortho(const T left, const T right, const T bottom,
+    const T top, const T near, const T far)
+{
     T width = right - left;
     T height = top - bottom;  // y = bottom - top;
     T depth = far - near;
@@ -199,7 +216,9 @@ void Matrix4<T>::Ortho(const T left, const T right, const T bottom, const T top,
 }
 
 template<typename T>
-void Matrix4<T>::Frustum(const T left, const T right, const T bottom, const T top, const T near, const T far) {
+void Matrix4<T>::Frustum(const T left, const T right, const T bottom,
+    const T top, const T near, const T far)
+{
     T width = right - left;
     T height = bottom - top;  // y = top - bottom;
     T depth = far - near;
@@ -211,14 +230,17 @@ void Matrix4<T>::Frustum(const T left, const T right, const T bottom, const T to
 }
 
 template<typename T>
-void Matrix4<T>::Perspective(const T fov, const T aspect, const T near, const T far) {
+void Matrix4<T>::Perspective(const T fov, const T aspect,
+    const T near, const T far)
+{
     const T height_rate = (near * tan(fov * M_PI / 360.0f));
     const T rate = height_rate * aspect;
     Frustum(-rate, rate, height_rate, -height_rate, near, far);
 }
 
 template<typename T>
-Vector3f Matrix4<T>::ToEulerAngles() const {
+Vector3f Matrix4<T>::ToEulerAngles() const
+{
     float sy = sqrt((*this)(0, 0) * (*this)(0, 0) +
         (*this)(1, 0) * (*this)(1, 0));
 
@@ -239,7 +261,8 @@ Vector3f Matrix4<T>::ToEulerAngles() const {
 }
 
 template<typename T>
-Vector3f Matrix4<T>::ToEulerAngles(const Matrix4<T> &rotation_matrix) {
+Vector3f Matrix4<T>::ToEulerAngles(const Matrix4<T> &rotation_matrix)
+{
     float sy = sqrt(rotation_matrix(0, 0) * rotation_matrix(0, 0) +
         rotation_matrix(1, 0) * rotation_matrix(1, 0));
 
@@ -260,7 +283,8 @@ Vector3f Matrix4<T>::ToEulerAngles(const Matrix4<T> &rotation_matrix) {
 }
 
 template<typename T>
-Vector3<T> Matrix4<T>::TransformDirection(const Vector3<T> &direction) const {
+Vector3<T> Matrix4<T>::TransformDirection(const Vector3<T> &direction) const
+{
     return Vector3<T>(
         a11 * direction.x + a12 * direction.y + a13 * direction.z,
         a21 * direction.x + a22 * direction.y + a23 * direction.z,
@@ -269,7 +293,8 @@ Vector3<T> Matrix4<T>::TransformDirection(const Vector3<T> &direction) const {
 }
 
 template<typename T>
-T *Matrix4<T>::Get_list() const {
+T *Matrix4<T>::Get_list() const
+{
     return new T[4 * 4]{
         a11, a12, a13, a14,
         a21, a22, a23, a24,
@@ -279,7 +304,8 @@ T *Matrix4<T>::Get_list() const {
 }
 
 template<typename T>
-std::array<std::array<T, 4>, 4> Matrix4<T>::Get_matrixed_list() const {
+std::array<std::array<T, 4>, 4> Matrix4<T>::Get_matrixed_list() const
+{
     return {{
         {a11, a12, a13, a14},
         {a21, a22, a23, a24},
@@ -289,7 +315,8 @@ std::array<std::array<T, 4>, 4> Matrix4<T>::Get_matrixed_list() const {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Create_identity() {
+Matrix4<T> Matrix4<T>::Create_identity()
+{
     return Matrix4<T> (
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -299,7 +326,8 @@ Matrix4<T> Matrix4<T>::Create_identity() {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Create_translation(const Vector3<T> &t) {
+Matrix4<T> Matrix4<T>::Create_translation(const Vector3<T> &t)
+{
     return Matrix4<T> (
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -309,7 +337,8 @@ Matrix4<T> Matrix4<T>::Create_translation(const Vector3<T> &t) {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Create_scale(const T &s) {
+Matrix4<T> Matrix4<T>::Create_scale(const T &s)
+{
     return Matrix4<T> (
         s, 0, 0, 0,
         0, s, 0, 0,
@@ -319,7 +348,8 @@ Matrix4<T> Matrix4<T>::Create_scale(const T &s) {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Create_scale(const Vector3<T> &s) {
+Matrix4<T> Matrix4<T>::Create_scale(const Vector3<T> &s)
+{
     return Matrix4<T> (
         s.x, 0, 0, 0,
         0, s.y, 0, 0,
@@ -329,7 +359,8 @@ Matrix4<T> Matrix4<T>::Create_scale(const Vector3<T> &s) {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::Create_rotation(const Vector3<T> &angles) {
+Matrix4<T> Matrix4<T>::Create_rotation(const Vector3<T> &angles)
+{
     Matrix4<T> rotate;
     rotate.Rotate(angles);
     return rotate;
@@ -347,13 +378,15 @@ T &Matrix4<T>::operator()(int row, int column) {
 }
 
 template<typename T>
-const T &Matrix4<T>::operator()(int row, int column) const {
+const T &Matrix4<T>::operator()(int row, int column) const
+{
     T *list = Get_list();
     return list[row * 4 + column];
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::operator+(const Matrix4<T> &other) const {
+Matrix4<T> Matrix4<T>::operator+(const Matrix4<T> &other) const
+{
     return Matrix4<T> (
         a11 + other.a11, a12 + other.a12, a13 + other.a13, a14 + other.a14,
         a21 + other.a21, a22 + other.a22, a23 + other.a23, a24 + other.a24,
@@ -363,12 +396,14 @@ Matrix4<T> Matrix4<T>::operator+(const Matrix4<T> &other) const {
 }
 
 template<typename T>
-void Matrix4<T>::operator+=(const Matrix4<T> &other) {
+void Matrix4<T>::operator+=(const Matrix4<T> &other)
+{
     *this = *this + other;
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::operator-() const {
+Matrix4<T> Matrix4<T>::operator-() const
+{
     return Matrix4<T> (
         -a11, -a12, -a13, -a14,
         -a21, -a22, -a23, -a24,
@@ -378,17 +413,20 @@ Matrix4<T> Matrix4<T>::operator-() const {
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::operator-(const Matrix4<T> &other) const {
+Matrix4<T> Matrix4<T>::operator-(const Matrix4<T> &other) const
+{
     return *this + (-other);
 }
 
 template<typename T>
-void Matrix4<T>::operator-=(const Matrix4<T> &other) {
+void Matrix4<T>::operator-=(const Matrix4<T> &other)
+{
     *this = *this - other;
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::operator*(const Matrix4<T> &other) const {
+Matrix4<T> Matrix4<T>::operator*(const Matrix4<T> &other) const
+{
     return Matrix4<T> (
 		a11 * other.a11 + a12 * other.a21 + a13 * other.a31 + a14 * other.a41,
 		a11 * other.a12 + a12 * other.a22 + a13 * other.a32 + a14 * other.a42,
@@ -410,7 +448,8 @@ Matrix4<T> Matrix4<T>::operator*(const Matrix4<T> &other) const {
 }
 
 template<typename T>
-Vector4<T> Matrix4<T>::operator*(const Vector4<T> &other) const {
+Vector4<T> Matrix4<T>::operator*(const Vector4<T> &other) const
+{
     return Vector4<T> (
         a11 * other.x + a12 * other.y + a13 * other.z + a14 * other.w,
         a21 * other.x + a22 * other.y + a23 * other.z + a24 * other.w,
@@ -420,12 +459,14 @@ Vector4<T> Matrix4<T>::operator*(const Vector4<T> &other) const {
 }
 
 template<typename T>
-void Matrix4<T>::operator*=(const Matrix4<T> &other) {
+void Matrix4<T>::operator*=(const Matrix4<T> &other)
+{
     *this = *this * other;
 }
 
 template<typename T>
-Matrix4<T> Matrix4<T>::operator/(const T &scalar) const {
+Matrix4<T> Matrix4<T>::operator/(const T &scalar) const
+{
     return Matrix4<T> (
         a11 / scalar, a12 / scalar, a13 / scalar, a14 / scalar,
         a21 / scalar, a22 / scalar, a23 / scalar, a24 / scalar,
@@ -435,12 +476,14 @@ Matrix4<T> Matrix4<T>::operator/(const T &scalar) const {
 }
 
 template<typename T>
-void Matrix4<T>::operator/=(const T &scalar) {
+void Matrix4<T>::operator/=(const T &scalar)
+{
     *this = *this / scalar;
 }
 
 template<typename T>
-void Matrix4<T>::operator=(const Matrix4 &other) {
+void Matrix4<T>::operator=(const Matrix4 &other)
+{
     a11 = other.a11, a12 = other.a12, a13 = other.a13, a14 = other.a14;
     a21 = other.a21, a22 = other.a22, a23 = other.a23, a24 = other.a24;
     a31 = other.a31, a32 = other.a32, a33 = other.a33, a34 = other.a34;
@@ -449,7 +492,8 @@ void Matrix4<T>::operator=(const Matrix4 &other) {
 
 template<typename T>
 template<typename U>
-void Matrix4<T>::operator=(const Matrix4<U> &other) {
+void Matrix4<T>::operator=(const Matrix4<U> &other)
+{
     a11 = static_cast<T>(other.a11), a12 = static_cast<T>(other.a12), a13 = static_cast<T>(other.a13), a14 = static_cast<T>(other.a14);
     a21 = static_cast<T>(other.a21), a22 = static_cast<T>(other.a22), a23 = static_cast<T>(other.a23), a24 = static_cast<T>(other.a24);
     a31 = static_cast<T>(other.a31), a32 = static_cast<T>(other.a32), a33 = static_cast<T>(other.a33), a34 = static_cast<T>(other.a34);
@@ -457,7 +501,8 @@ void Matrix4<T>::operator=(const Matrix4<U> &other) {
 }
 
 template<typename T>
-bool Matrix4<T>::operator==(const Matrix4 &other) const {
+bool Matrix4<T>::operator==(const Matrix4 &other) const
+{
     return (
         a11 == other.a11 && a12 == other.a12 && a13 == other.a13 && a14 == other.a14 &&
         a21 == other.a21 && a22 == other.a22 && a23 == other.a23 && a24 == other.a24 &&
@@ -467,6 +512,7 @@ bool Matrix4<T>::operator==(const Matrix4 &other) const {
 }
 
 template<typename T>
-bool Matrix4<T>::operator!=(const Matrix4 &other) const {
+bool Matrix4<T>::operator!=(const Matrix4 &other) const
+{
     return !(*this == other);
 }

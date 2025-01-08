@@ -12,7 +12,8 @@ template class Vector4<unsigned>;
 template class Vector4<float>;
 
 template<typename T>
-Vector4<T>::Vector4(T x, T y, T z, T w) {
+Vector4<T>::Vector4(T x, T y, T z, T w)
+{
     this->x = x;
     this->y = y;
     this->z = z;
@@ -31,7 +32,8 @@ template<typename T>
 Vector4<T>::~Vector4() {}
 
 template<typename T>
-Vector4<T> Vector4<T>::operator+(const Vector4<T> &other) {
+Vector4<T> Vector4<T>::operator+(const Vector4<T> &other)
+{
     return Vector4<T>(
         this->x + other.x,
         this->y + other.y,
@@ -41,7 +43,8 @@ Vector4<T> Vector4<T>::operator+(const Vector4<T> &other) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator+=(const Vector4<T> &other) {
+Vector4<T> Vector4<T>::operator+=(const Vector4<T> &other)
+{
     this->x += other.x;
     this->y += other.y;
     this->z += other.z;
@@ -50,7 +53,8 @@ Vector4<T> Vector4<T>::operator+=(const Vector4<T> &other) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator-() {
+Vector4<T> Vector4<T>::operator-()
+{
     this->x = -this->x;
     this->y = -this->y;
     this->z = -this->z;
@@ -59,7 +63,8 @@ Vector4<T> Vector4<T>::operator-() {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator-(const Vector4<T> &other) {
+Vector4<T> Vector4<T>::operator-(const Vector4<T> &other)
+{
     return Vector4<T>(
         this->x - other.x,
         this->y - other.y,
@@ -69,7 +74,8 @@ Vector4<T> Vector4<T>::operator-(const Vector4<T> &other) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator-=(const Vector4<T> &other) {
+Vector4<T> Vector4<T>::operator-=(const Vector4<T> &other)
+{
     this->x -= other.x;
     this->y -= other.y;
     this->z -= other.z;
@@ -78,7 +84,8 @@ Vector4<T> Vector4<T>::operator-=(const Vector4<T> &other) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator*(const T &factor) {
+Vector4<T> Vector4<T>::operator*(const T &factor)
+{
     return Vector4<T>(
         this->x * factor,
         this->y * factor,
@@ -88,7 +95,8 @@ Vector4<T> Vector4<T>::operator*(const T &factor) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator*=(const T &factor) {
+Vector4<T> Vector4<T>::operator*=(const T &factor)
+{
     this->x *= factor;
     this->y *= factor;
     this->z *= factor;
@@ -97,7 +105,8 @@ Vector4<T> Vector4<T>::operator*=(const T &factor) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator/(const T &factor) {
+Vector4<T> Vector4<T>::operator/(const T &factor)
+{
     if (factor == 0)
         throw std::invalid_argument("Division by zero");
     return Vector4<T>(
@@ -109,7 +118,8 @@ Vector4<T> Vector4<T>::operator/(const T &factor) {
 }
 
 template<typename T>
-Vector4<T> Vector4<T>::operator/=(const T &factor) {
+Vector4<T> Vector4<T>::operator/=(const T &factor)
+{
     if (factor == 0)
         throw std::invalid_argument("Division by zero");
     this->x /= factor;
@@ -120,7 +130,8 @@ Vector4<T> Vector4<T>::operator/=(const T &factor) {
 }
 
 template<typename T>
-bool Vector4<T>::operator==(const Vector4<T> &other) {
+bool Vector4<T>::operator==(const Vector4<T> &other)
+{
     return (
         this->x == other.x &&
         this->y == other.y &&
@@ -130,6 +141,7 @@ bool Vector4<T>::operator==(const Vector4<T> &other) {
 }
 
 template<typename T>
-bool Vector4<T>::operator!=(const Vector4<T> &other) {
+bool Vector4<T>::operator!=(const Vector4<T> &other)
+{
     return !(*this == other);
 }
